@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Student Dashboard</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <h2>Student Dashboard</h2>
+  <nav><a href="/">Home</a></nav>
+
+  <h3>All Courses</h3>
+  <div>
+    <ul>
+      <li th:each="c : ${allCourses}">
+        <span th:text="${c.title}">Course</span>
+        <form th:action="@{|/student/enroll/${c.id}|}" method="post" style="display:inline">
+          <button type="submit">Enroll</button>
+        </form>
+        <a th:href="@{|/student/course/${c.id}|}">View (if enrolled)</a>
+      </li>
+    </ul>
+  </div>
+
+  <h3>Enrolled Courses</h3>
+  <div>
+    <ul>
+      <li th:each="c : ${enrolledCourses}">
+        <a th:href="@{|/student/course/${c.id}|}" th:text="${c.title}">Enrolled Course</a>
+      </li>
+    </ul>
+  </div>
+</body>
+</html>

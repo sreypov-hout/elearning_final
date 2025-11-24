@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Create Lesson</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <h2>Create Lesson for Course</h2>
+  <form th:action="@{|/teacher/course/${lesson.course.id}/create-lesson|}" method="post" th:object="${lesson}">
+    <label>Title</label><br/>
+    <input type="text" th:field="*{title}" required/><br/>
+    <label>Content</label><br/>
+    <textarea th:field="*{content}" rows="8"></textarea><br/><br/>
+    <button type="submit">Create Lesson</button>
+  </form>
+</body>
+</html>

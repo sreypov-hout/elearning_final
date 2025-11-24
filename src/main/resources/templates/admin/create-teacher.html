@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Create Teacher</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <h2>Create Teacher</h2>
+  <div th:if="${error}" style="color:red" th:text="${error}"></div>
+  <div th:if="${success}" style="color:green" th:text="${success}"></div>
+
+  <form th:action="@{/admin/create-teacher}" method="post" th:object="${user}">
+    <label>Full name</label><br/>
+    <input type="text" th:field="*{fullname}" required/><br/>
+    <label>Email</label><br/>
+    <input type="email" th:field="*{email}" required/><br/>
+    <label>Password</label><br/>
+    <input type="password" th:field="*{password}" required/><br/><br/>
+    <button type="submit">Create Teacher</button>
+  </form>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title th:text="${course.title}">Course Details</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <h2 th:text="${course.title}">Course Title</h2>
+  <p th:text="${course.description}">Description</p>
+
+  <h3>Lessons</h3>
+  <ul>
+    <li th:each="l : ${lessons}">
+      <h4 th:text="${l.title}">Lesson title</h4>
+      <p th:text="${l.content}">Lesson content</p>
+    </li>
+  </ul>
+
+  <a href="/student/dashboard">Back</a>
+</body>
+</html>
