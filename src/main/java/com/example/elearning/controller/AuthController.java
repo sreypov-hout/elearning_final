@@ -16,31 +16,60 @@ public class AuthController {
         this.userService = userService;
     }
 
+    // Home page
     @GetMapping("/")
     public String index() {
         return "index";
     }
 
+    // Login
     @GetMapping("/login")
     public String loginPage() {
         return "auth/login";
     }
 
-    @GetMapping("/register")
-    public String registerForm(Model model) {
+    // -------------------------------
+    // STUDENT REGISTER PAGE
+    // -------------------------------
+    @GetMapping("/register/student")
+    public String studentRegisterPage(Model model) {
         model.addAttribute("user", new User());
-        return "auth/register";
+        model.addAttribute("role", "STUDENT");
+        return "auth/register";   // uses same register page
     }
 
+    // -------------------------------
+    // TEACHER REGISTER PAGE
+    // -------------------------------
+    @GetMapping("/register/teacher")
+    public String teacherRegisterPage(Model model) {
+        model.addAttribute("user", new User());
+        model.addAttribute("role", "TEACHER");
+        return "auth/register";   // uses same register page
+    }
+
+    // -------------------------------
+    // SUBMIT REGISTER FORM
+    // -------------------------------
     @PostMapping("/register")
-    public String register(@ModelAttribute("user") User user, Model model) {
+    public String registerUser(
+            @ModelAttribute("user") User user,
+            @RequestParam("role") String role,
+            Model model) {
+
+        // Check email exists
         if (userService.existsByEmail(user.getEmail())) {
             model.addAttribute("error", "Email already exists");
+            model.addAttribute("role", role);
             return "auth/register";
         }
-        // default new registrants are STUDENT (for demo).
-        user.setRole(Role.STUDENT);
+
+        // Convert String to Enum
+        user.setRole(Role.valueOf(role));
+
+        // Save user
         userService.register(user);
+
         return "redirect:/login?registered";
     }
 }

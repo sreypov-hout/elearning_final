@@ -6,20 +6,41 @@
   <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
-  <h2>Teacher Dashboard</h2>
-  <nav>
-    <a href="/teacher/create-course">Create Course</a> |
-    <a href="/">Home</a>
-  </nav>
+<h2>Teacher Dashboard</h2>
 
-  <h3>Your Courses</h3>
-  <div th:if="${courses != null}">
-    <ul>
-      <li th:each="c : ${courses}">
-        <span th:text="${c.title}">Course title</span> -
-        <a th:href="@{'/teacher/course/' + ${c.id} + '/create-lesson'}">Create Lesson</a>
-      </li>
-    </ul>
-  </div>
+<nav>
+  <a href="/teacher/create-course">Create Course</a> |
+  <a href="/">Home</a>
+</nav>
+
+<h3>Your Courses</h3>
+
+<div th:if="${courses != null}">
+  <ul>
+    <li th:each="c : ${courses}">
+      <span th:text="${c.title}"></span>
+
+      <!-- Create lesson link -->
+      -
+      <a th:href="@{'/teacher/course/' + ${c.id} + '/create-lesson'}">Create Lesson</a>
+
+      <!-- Show lessons under each course -->
+      <ul>
+  <li th:each="lesson : ${c.lessons}">
+    <p th:text="${lesson.title}"></p>
+
+    <div th:if="${lesson.videoUrl != null}">
+      <video width="320" height="240" controls>
+        <source th:src="${lesson.videoUrl}" type="video/mp4" />
+      </video>
+    </div>
+  </li>
+</ul>
+
+
+    </li>
+  </ul>
+</div>
+
 </body>
 </html>

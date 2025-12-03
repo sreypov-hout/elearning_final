@@ -17,7 +17,8 @@
         <form th:action="@{|/student/enroll/${c.id}|}" method="post" style="display:inline">
           <button type="submit">Enroll</button>
         </form>
-        <a th:href="@{|/student/course/${c.id}|}">View (if enrolled)</a>
+        <a th:if="${#lists.contains(enrolledCourses, c)}"
+   th:href="@{|/student/course/${c.id}|}">View</a>
       </li>
     </ul>
   </div>

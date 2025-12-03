@@ -11,13 +11,17 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class Lesson {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String title;
 
     @Column(length = 5000)
     private String content;
+
+    private String videoUrl;  // ✅ Add this field
 
     @ManyToOne
     @JoinColumn(name = "course_id")

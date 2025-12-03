@@ -3,16 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <title>Create Lesson</title>
-  <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
-  <h2>Create Lesson for Course</h2>
-  <form th:action="@{|/teacher/course/${lesson.course.id}/create-lesson|}" method="post" th:object="${lesson}">
+
+<h2>Create Lesson</h2>
+
+<form th:action="@{|/teacher/course/${courseId}/create-lesson|}"
+      th:object="${lesson}"
+      method="post"
+      enctype="multipart/form-data">
+
+    <input type="hidden" th:field="*{id}" />
+    <input type="hidden" th:field="*{course.id}" />
+
     <label>Title</label><br/>
-    <input type="text" th:field="*{title}" required/><br/>
+    <input type="text" th:field="*{title}" required/><br/><br/>
+
     <label>Content</label><br/>
-    <textarea th:field="*{content}" rows="8"></textarea><br/><br/>
+    <textarea th:field="*{content}" rows="6"></textarea><br/><br/>
+
+    <label>Upload Video Lesson</label><br/>
+    <input type="file" name="videoFile" accept="video/*"/><br/><br/>
+
     <button type="submit">Create Lesson</button>
-  </form>
+</form>
+
 </body>
 </html>

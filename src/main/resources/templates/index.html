@@ -1,16 +1,53 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Home</title>
+    <title>E-Learning</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <th:block th:replace="layout/header :: head"></th:block>
 </head>
 
-<body>
-    <th:block th:replace="layout/header :: header"></th:block>
+<body class="bg-gray-50">
 
-    <h1>Welcome to E-Learning</h1>
-    <p>Use the menu to login or register.</p>
+<!-- NAV -->
+<th:block th:replace="layout/header :: header"></th:block>
 
-    <th:block th:replace="layout/footer :: footer"></th:block>
+<!-- HERO SECTION -->
+<section class="max-w-6xl mx-auto px-6 py-16 flex flex-col md:flex-row items-center">
+    
+    <div class="flex-1">
+        <h1 class="text-4xl md:text-5xl font-bold leading-tight text-gray-900">
+            Learn Anything, Anytime
+        </h1>
+        <p class="mt-4 text-gray-600 text-lg">
+            Courses for Admins, Teachers, and Students. Find your next skill today.
+        </p>
+
+        <a th:href="@{/courses}"
+           class="inline-block mt-6 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-700">
+            Browse Courses
+        </a>
+    </div>
+
+    <div class="flex-1 text-center mt-8 md:mt-0">
+        <img src="/img/hero-learning.png" class="w-4/5 mx-auto">
+    </div>
+</section>
+
+<!-- POPULAR CATEGORIES -->
+<section class="max-w-6xl mx-auto px-6 mt-12">
+    <h2 class="text-2xl font-bold mb-6">Popular Categories</h2>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="p-5 bg-white shadow rounded-lg"
+             th:each="cat : ${categories}">
+            <h3 class="font-semibold text-gray-700"
+                th:text="${cat.name}">Category</h3>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<th:block th:replace="layout/footer :: footer"></th:block>
+
 </body>
 </html>
