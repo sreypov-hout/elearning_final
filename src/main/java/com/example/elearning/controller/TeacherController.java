@@ -6,17 +6,16 @@ import com.example.elearning.entity.User;
 import com.example.elearning.service.CourseService;
 import com.example.elearning.service.LessonService;
 import com.example.elearning.service.UserService;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 @Controller
 @RequestMapping("/teacher")
@@ -32,108 +31,139 @@ public class TeacherController {
         this.userService = userService;
     }
 
+    /** ---------------- DASHBOARD ---------------- **/
     @GetMapping("/dashboard")
     public String dashboard(Authentication auth, Model model) {
-        String email = auth.getName();
-        User teacher = userService.findByEmail(email).orElse(null);
+        User teacher = userService.findByEmail(auth.getName()).orElseThrow();
         model.addAttribute("teacher", teacher);
         model.addAttribute("courses", courseService.findByTeacher(teacher));
         return "teacher/dashboard";
     }
 
+    /** ---------------- COURSE CRUD ---------------- **/
+
+    // CREATE COURSE FORM
     @GetMapping("/create-course")
     public String createCourseForm(Model model) {
         model.addAttribute("course", new Course());
         return "teacher/create-course";
     }
 
+    // CREATE COURSE POST
     @PostMapping("/create-course")
     public String createCourse(@ModelAttribute("course") Course course, Authentication auth) {
-        String email = auth.getName();
-        User teacher = userService.findByEmail(email).orElse(null);
+        User teacher = userService.findByEmail(auth.getName()).orElseThrow();
         course.setTeacher(teacher);
-        courseService.create(course);
+        courseService.save(course);
         return "redirect:/teacher/dashboard";
     }
 
-    // @GetMapping("/course/{id}/create-lesson")
-    // public String createLessonForm(@PathVariable Long id, Model model) {
-    //     Lesson lesson = new Lesson();
-    //     lesson.setCourse(courseService.findById(id).orElse(null));
-    //     model.addAttribute("lesson", lesson);
-    //     model.addAttribute("id", id);   // ADD THIS
-    //     return "teacher/create-lesson";
-    // }
-
-@GetMapping("/course/{id}/create-lesson")
-public String createLessonForm(@PathVariable Long id, Model model) {
-
-    Lesson lesson = new Lesson();
-    Course course = courseService.findById(id).orElseThrow();
-    lesson.setCourse(course);
-
-    model.addAttribute("lesson", lesson);
-    model.addAttribute("courseId", id);
-
-    return "teacher/create-lesson";
-}
-
-@PostMapping("/course/{id}/create-lesson")
-public String createLesson(
-        @PathVariable Long id,
-        @ModelAttribute("lesson") Lesson formLesson,
-        @RequestParam("videoFile") MultipartFile videoFile
-) {
-
-    Course course = courseService.findById(id).orElseThrow();
-
-    Lesson lesson = new Lesson();
-    lesson.setTitle(formLesson.getTitle());
-    lesson.setContent(formLesson.getContent());
-    lesson.setCourse(course);
-
-    // Handle the video upload
-    if (!videoFile.isEmpty()) {
-
-        try {
-            String fileName = System.currentTimeMillis() + "_" + videoFile.getOriginalFilename();
-            Path uploadPath = Paths.get("uploads/videos");
-
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
-
-            Path filePath = uploadPath.resolve(fileName);
-            Files.copy(videoFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-            lesson.setVideoUrl("/videos/" + fileName);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    // EDIT COURSE FORM
+    @GetMapping("/edit-course/{id}")
+    public String editCourseForm(@PathVariable Long id, Model model) {
+        Course course = courseService.findById(id).orElseThrow();
+        model.addAttribute("course", course);
+        return "teacher/edit-course";
     }
 
-    lessonService.create(lesson);
+    // UPDATE COURSE POST
+    @PostMapping("/edit-course/{id}")
+    public String updateCourse(@PathVariable Long id, @ModelAttribute("course") Course updatedCourse) {
+        Course course = courseService.findById(id).orElseThrow();
+        course.setTitle(updatedCourse.getTitle());
+        course.setDescription(updatedCourse.getDescription());
+        courseService.save(course);
+        return "redirect:/teacher/dashboard";
+    }
 
-    return "redirect:/teacher/dashboard";
-}
+    // DELETE COURSE
+    @GetMapping("/delete-course/{id}")
+    public String deleteCourse(@PathVariable Long id) {
+        courseService.deleteById(id);
+        return "redirect:/teacher/dashboard";
+    }
 
+    /** ---------------- LESSON CRUD ---------------- **/
 
-//     @PostMapping("/course/{id}/create-lesson")
-// public String createLesson(
-//         @PathVariable Long id,
-//         @ModelAttribute("lesson") Lesson formLesson) {
+    // CREATE LESSON FORM
+    @GetMapping("/course/{courseId}/create-lesson")
+    public String createLessonForm(@PathVariable Long courseId, Model model) {
+        Lesson lesson = new Lesson();
+        lesson.setCourse(courseService.findById(courseId).orElseThrow());
+        model.addAttribute("lesson", lesson);
+        model.addAttribute("courseId", courseId);
+        return "teacher/create-lesson";
+    }
 
-//     Course course = courseService.findById(id).orElseThrow();
+    // CREATE LESSON POST
+    @PostMapping("/course/{courseId}/create-lesson")
+    public String createLesson(
+            @PathVariable Long courseId,
+            @ModelAttribute("lesson") Lesson formLesson,
+            @RequestParam("videoFile") MultipartFile videoFile
+    ) {
+        Lesson lesson = new Lesson();
+        lesson.setCourse(courseService.findById(courseId).orElseThrow());
+        lesson.setTitle(formLesson.getTitle());
+        lesson.setContent(formLesson.getContent());
 
-//     Lesson newLesson = new Lesson();
-//     newLesson.setTitle(formLesson.getTitle());
-//     newLesson.setContent(formLesson.getContent());
-//     newLesson.setCourse(course);
+        if (!videoFile.isEmpty()) {
+            try {
+                String fileName = System.currentTimeMillis() + "_" + videoFile.getOriginalFilename();
+                Path uploadPath = Paths.get("uploads/videos");
+                if (!Files.exists(uploadPath)) Files.createDirectories(uploadPath);
+                Files.copy(videoFile.getInputStream(), uploadPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+                lesson.setVideoUrl("/videos/" + fileName);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
-//     lessonService.create(newLesson);
+        lessonService.save(lesson);
+        return "redirect:/teacher/dashboard";
+    }
 
-//     return "redirect:/teacher/dashboard";
-// }
+    // EDIT LESSON FORM
+    @GetMapping("/course/{courseId}/edit-lesson/{lessonId}")
+    public String editLessonForm(@PathVariable Long courseId, @PathVariable Long lessonId, Model model) {
+        Lesson lesson = lessonService.findById(lessonId).orElseThrow();
+        model.addAttribute("lesson", lesson);
+        model.addAttribute("courseId", courseId);
+        return "teacher/edit-lesson";
+    }
 
+    // UPDATE LESSON POST
+    @PostMapping("/course/{courseId}/edit-lesson/{lessonId}")
+    public String updateLesson(
+            @PathVariable Long courseId,
+            @PathVariable Long lessonId,
+            @ModelAttribute("lesson") Lesson formLesson,
+            @RequestParam("videoFile") MultipartFile videoFile
+    ) {
+        Lesson lesson = lessonService.findById(lessonId).orElseThrow();
+        lesson.setTitle(formLesson.getTitle());
+        lesson.setContent(formLesson.getContent());
+
+        if (!videoFile.isEmpty()) {
+            try {
+                String fileName = System.currentTimeMillis() + "_" + videoFile.getOriginalFilename();
+                Path uploadPath = Paths.get("uploads/videos");
+                if (!Files.exists(uploadPath)) Files.createDirectories(uploadPath);
+                Files.copy(videoFile.getInputStream(), uploadPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+                lesson.setVideoUrl("/videos/" + fileName);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        lessonService.save(lesson);
+        return "redirect:/teacher/dashboard";
+    }
+
+    // DELETE LESSON
+    @GetMapping("/course/{courseId}/delete-lesson/{lessonId}")
+    public String deleteLesson(@PathVariable Long courseId, @PathVariable Long lessonId) {
+        lessonService.deleteById(lessonId);
+        return "redirect:/teacher/dashboard";
+    }
 }

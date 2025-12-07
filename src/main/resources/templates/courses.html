@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Browse Courses - E-Learning</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <th:block th:replace="layout/header :: head"></th:block>
+</head>
+
+<body class="bg-gray-50">
+
+<!-- NAV -->
+<th:block th:replace="layout/header :: header"></th:block>
+
+<!-- Hero Section -->
+<div class="bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+    <div class="w-full px-4 sm:px-6 lg:px-8 py-16">
+        <div class="max-w-3xl">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Discover Your Next Course</h1>
+            <p class="text-xl text-purple-100 mb-8">Explore thousands of courses and learn new skills to advance your career</p>
+            
+            <!-- Search Bar -->
+            <div class="max-w-2xl">
+                <div class="flex">
+                    <input 
+                        type="text" 
+                        placeholder="Search for courses..." 
+                        class="flex-1 px-6 py-4 rounded-l-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-300"
+                    />
+                    <button class="px-8 py-4 bg-purple-800 hover:bg-purple-900 rounded-r-lg font-semibold transition">
+                        Search
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="w-full px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Section Header -->
+    <div class="mb-8">
+        <h2 class="text-3xl font-bold text-gray-900 mb-2">All Courses</h2>
+        <p class="text-gray-600">Choose from our wide selection of courses</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="mb-8 flex items-center gap-4 flex-wrap">
+        <button class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition font-medium">
+            All Courses
+        </button>
+        <button class="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium">
+            Development
+        </button>
+        <button class="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium">
+            Business
+        </button>
+        <button class="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium">
+            Design
+        </button>
+    </div>
+
+    <!-- Courses Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <!-- Course Card -->
+        <div th:each="c : ${allCourses}" 
+             class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition group">
+            <!-- Course Image -->
+            <div class="h-48 bg-gradient-to-br from-purple-400 via-pink-400 to-red-400 flex items-center justify-center relative overflow-hidden">
+                <svg class="w-20 h-20 text-white opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                </svg>
+                
+                <!-- Enrolled Badge -->
+                <div th:if="${#lists.contains(enrolledCourses, c)}" 
+                     class="absolute top-3 right-3 px-3 py-1 bg-green-500 text-white text-xs font-semibold rounded-full">
+                    Enrolled
+                </div>
+            </div>
+
+            <!-- Course Content -->
+            <div class="p-5">
+                <h3 class="font-bold text-gray-900 text-lg mb-2 group-hover:text-purple-600 transition line-clamp-2" 
+                    th:text="${c.title}">Course Title</h3>
+                <p class="text-sm text-gray-600 mb-4 line-clamp-3" th:text="${c.description}">Course description goes here with details about what students will learn.</p>
+                
+                <!-- Course Meta -->
+                <div class="flex items-center text-sm text-gray-500 mb-4">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                    <span th:text="${c.lessons != null ? #lists.size(c.lessons) : 0}">0</span>
+                    <span class="ml-1">lessons</span>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex gap-2">
+                    <!-- Enroll Button (if not enrolled) -->
+                    <form th:if="${!#lists.contains(enrolledCourses, c)}" 
+                          th:action="@{|/student/enroll/${c.id}|}" 
+                          method="post" 
+                          class="flex-1">
+                        <button 
+                            type="submit" 
+                            class="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition font-medium">
+                            Enroll Now
+                        </button>
+                    </form>
+
+                    <!-- View Button (if enrolled) -->
+                    <a th:if="${#lists.contains(enrolledCourses, c)}"
+                       th:href="@{|/student/course/${c.id}|}" 
+                       class="flex-1 block text-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium">
+                        Go to Course
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div th:if="${allCourses == null || #lists.isEmpty(allCourses)}" 
+         class="text-center py-16">
+        <svg class="w-24 h-24 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+        </svg>
+        <h3 class="text-2xl font-bold text-gray-900 mb-2">No courses available yet</h3>
+        <p class="text-gray-600">Check back soon for new courses!</p>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<th:block th:replace="layout/footer :: footer"></th:block>
+
+</body>
+</html>

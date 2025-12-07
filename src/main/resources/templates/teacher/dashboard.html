@@ -1,46 +1,207 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8" />
-  <title>Teacher Dashboard</title>
-  <link rel="stylesheet" href="/css/style.css" />
+<head th:replace="~{layout/header :: head}">
+    <title>Teacher Dashboard</title>
 </head>
-<body>
-<h2>Teacher Dashboard</h2>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header fragment (already includes navigation) -->
+    <header th:replace="~{layout/header :: header}"></header>
 
-<nav>
-  <a href="/teacher/create-course">Create Course</a> |
-  <a href="/">Home</a>
-</nav>
-
-<h3>Your Courses</h3>
-
-<div th:if="${courses != null}">
-  <ul>
-    <li th:each="c : ${courses}">
-      <span th:text="${c.title}"></span>
-
-      <!-- Create lesson link -->
-      -
-      <a th:href="@{'/teacher/course/' + ${c.id} + '/create-lesson'}">Create Lesson</a>
-
-      <!-- Show lessons under each course -->
-      <ul>
-  <li th:each="lesson : ${c.lessons}">
-    <p th:text="${lesson.title}"></p>
-
-    <div th:if="${lesson.videoUrl != null}">
-      <video width="320" height="240" controls>
-        <source th:src="${lesson.videoUrl}" type="video/mp4" />
-      </video>
+    <!-- Teacher Dashboard Content -->
+    <div class="bg-white shadow-sm border-b border-gray-200 w-full">
+        <div class="w-full px-4 sm:px-6 lg:px-8 py-4"> 
+            <div class="flex items-center justify-between">
+                <h1 class="text-2xl font-bold text-gray-900">Teacher Dashboard</h1>
+                <nav class="flex items-center space-x-4">
+                    <a href="/teacher/create-course" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition font-medium">
+                        + Create Course
+                    </a>
+                    <a href="/" class="px-4 py-2 text-gray-700 hover:text-gray-900 transition font-medium">
+                        Home
+                    </a>
+                </nav>
+            </div>
+        </div>
     </div>
-  </li>
-</ul>
 
+    <!-- Main Content -->
+    <main class="py-8 w-full">
+        <div class="px-4 sm:px-6 lg:px-8">
+            <div class="mb-6">
+                <h2 class="text-xl font-semibold text-gray-900">Your Courses</h2>
+                <p class="text-gray-600 mt-1">Manage your courses and lessons</p>
+            </div>
 
-    </li>
-  </ul>
-</div>
+            <div th:if="${courses != null}" class="space-y-6">
+                <div th:each="c : ${courses}" class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition">
+                    <div class="p-6 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-pink-50">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold text-gray-900" th:text="${c.title}"></h3>
+                                <p class="text-gray-600 mt-2" th:text="${c.description}"></p>
+                            </div>
+                            <div class="flex items-center space-x-2 ml-4">
+                                <button type="button" 
+                                        class="px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 rounded-lg hover:bg-blue-100 transition"
+                                        th:onclick="'document.getElementById(\'editCourseModal' + ${c.id} + '\').classList.remove(\'hidden\')'">
+                                    Edit
+                                </button>
+                                <button type="button" 
+                                        class="px-4 py-2 text-sm font-medium text-red-700 bg-red-50 rounded-lg hover:bg-red-100 transition"
+                                        th:onclick="'document.getElementById(\'deleteCourseModal' + ${c.id} + '\').classList.remove(\'hidden\')'">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="text-lg font-semibold text-gray-900">Lessons</h4>
+                            <a th:href="@{'/teacher/course/' + ${c.id} + '/create-lesson'}" 
+                               class="px-4 py-2 text-sm font-medium text-purple-700 bg-purple-50 rounded-lg hover:bg-purple-100 transition">
+                                + Add Lesson
+                            </a>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div th:each="lesson : ${c.lessons}" class="border border-gray-200 rounded-lg p-4 hover:border-purple-300 transition">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex-1">
+                                        <h5 class="font-semibold text-gray-900" th:text="${lesson.title}"></h5>
+                                        <p class="text-sm text-gray-600 mt-1" th:text="${lesson.content}"></p>
+                                        
+                                        <div th:if="${lesson.videoUrl != null}" class="mt-3">
+                                            <video class="w-full rounded-lg shadow-sm" controls>
+                                                <source th:src="${lesson.videoUrl}" type="video/mp4"/>
+                                            </video>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center space-x-2 ml-4">
+                                        <button type="button" 
+                                                class="px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 rounded hover:bg-blue-100 transition"
+                                                th:onclick="'document.getElementById(\'editLessonModal' + ${lesson.id} + '\').classList.remove(\'hidden\')'">
+                                            Edit
+                                        </button>
+                                        <button type="button" 
+                                                class="px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 rounded hover:bg-red-100 transition"
+                                                th:onclick="'document.getElementById(\'deleteLessonModal' + ${lesson.id} + '\').classList.remove(\'hidden\')'">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div th:id="'editLessonModal' + ${lesson.id}" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">
+                                    <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-lg mx-4">
+                                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Edit Lesson</h2>
+                                        <form th:action="@{'/teacher/course/' + ${c.id} + '/edit-lesson/' + ${lesson.id}}" method="post" enctype="multipart/form-data" class="space-y-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                                                <input type="text" name="title" th:value="${lesson.title}" 
+                                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"/>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Content</label>
+                                                <textarea name="content" rows="4" 
+                                                          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" 
+                                                          th:text="${lesson.content}"></textarea>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Video</label>
+                                                <input type="file" name="videoFile" accept="video/*" 
+                                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"/>
+                                            </div>
+                                            <div class="flex justify-end gap-3 mt-6">
+                                                <button type="button" 
+                                                        class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium" 
+                                                        th:onclick="'document.getElementById(\'editLessonModal' + ${lesson.id} + '\').classList.add(\'hidden\')'">
+                                                    Cancel
+                                                </button>
+                                                <button type="submit" 
+                                                        class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition font-medium">
+                                                    Update Lesson
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <div th:id="'deleteLessonModal' + ${lesson.id}" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">
+                                    <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md mx-4">
+                                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Confirm Deletion</h2>
+                                        <p class="text-gray-600 mb-6">
+                                            Are you sure you want to delete lesson: <span class="font-semibold" th:text="${lesson.title}"></span>?
+                                        </p>
+                                        <div class="flex justify-end gap-3">
+                                            <button type="button" 
+                                                    class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium" 
+                                                    th:onclick="'document.getElementById(\'deleteLessonModal' + ${lesson.id} + '\').classList.add(\'hidden\')'">
+                                                Cancel
+                                            </button>
+                                            <a th:href="@{'/teacher/course/' + ${c.id} + '/delete-lesson/' + ${lesson.id}}" 
+                                               class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium inline-block">
+                                                Delete
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div th:id="'editCourseModal' + ${c.id}" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">
+                        <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-lg mx-4">
+                            <h2 class="text-2xl font-bold text-gray-900 mb-6">Edit Course</h2>
+                            <form th:action="@{'/teacher/edit-course/' + ${c.id}}" method="post" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                                    <input type="text" name="title" th:value="${c.title}" 
+                                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"/>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                                    <textarea name="description" rows="4" 
+                                              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" 
+                                              th:text="${c.description}"></textarea>
+                                </div>
+                                <div class="flex justify-end gap-3 mt-6">
+                                    <button type="button" 
+                                            class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium" 
+                                            th:onclick="'document.getElementById(\'editCourseModal' + ${c.id} + '\').classList.add(\'hidden\')'">
+                                        Cancel
+                                    </button>
+                                    <button type="submit" 
+                                            class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition font-medium">
+                                        Update Course
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div th:id="'deleteCourseModal' + ${c.id}" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">
+                        <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md mx-4">
+                            <h2 class="text-2xl font-bold text-gray-900 mb-4">Confirm Deletion</h2>
+                            <p class="text-gray-600 mb-6">
+                                Are you sure you want to delete course: <span class="font-semibold" th:text="${c.title}"></span>?
+                            </p>
+                            <div class="flex justify-end gap-3">
+                                <button type="button" 
+                                        class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium" 
+                                        th:onclick="'document.getElementById(\'deleteCourseModal' + ${c.id} + '\').classList.add(\'hidden\')'">
+                                    Cancel
+                                </button>
+                                <a th:href="@{'/teacher/delete-course/' + ${c.id}}" 
+                                   class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium inline-block">
+                                    Delete
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
 </body>
 </html>

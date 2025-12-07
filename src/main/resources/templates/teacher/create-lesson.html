@@ -3,30 +3,155 @@
 <head>
   <meta charset="UTF-8" />
   <title>Create Lesson</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-50 min-h-screen">
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b border-gray-200">
+    <div class="w-full px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold text-gray-900">Create New Lesson</h1>
+        <nav class="flex items-center space-x-4">
+          <a href="/teacher/dashboard" class="px-4 py-2 text-gray-700 hover:text-gray-900 transition font-medium">
+            Dashboard
+          </a>
+          <a href="/" class="px-4 py-2 text-gray-700 hover:text-gray-900 transition font-medium">
+            Home
+          </a>
+        </nav>
+      </div>
+    </div>
+  </header>
 
-<h2>Create Lesson</h2>
+  <!-- Main Content -->
+  <main class="w-full px-4 sm:px-6 lg:px-8 py-8">
+    <div class="max-w-3xl mx-auto">
+      <!-- Info Card -->
+      <div class="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-6">
+        <div class="flex items-start">
+          <svg class="w-5 h-5 text-purple-600 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+          </svg>
+          <div>
+            <h3 class="text-sm font-medium text-purple-900">Creating engaging lessons</h3>
+            <p class="text-sm text-purple-700 mt-1">Add clear titles, detailed content, and video materials to help students learn effectively.</p>
+          </div>
+        </div>
+      </div>
 
-<form th:action="@{|/teacher/course/${courseId}/create-lesson|}"
-      th:object="${lesson}"
-      method="post"
-      enctype="multipart/form-data">
+      <!-- Form Card -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div class="p-8">
+          <form th:action="@{|/teacher/course/${courseId}/create-lesson|}"
+                th:object="${lesson}"
+                method="post"
+                enctype="multipart/form-data"
+                class="space-y-6">
 
-    <input type="hidden" th:field="*{id}" />
-    <input type="hidden" th:field="*{course.id}" />
+            <input type="hidden" th:field="*{id}" />
+            <input type="hidden" th:field="*{course.id}" />
 
-    <label>Title</label><br/>
-    <input type="text" th:field="*{title}" required/><br/><br/>
+            <!-- Title Field -->
+            <div>
+              <label for="title" class="block text-sm font-semibold text-gray-900 mb-2">
+                Lesson Title <span class="text-red-500">*</span>
+              </label>
+              <input 
+                type="text" 
+                id="title"
+                th:field="*{title}" 
+                required
+                placeholder="e.g., Introduction to JavaScript Variables"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition text-gray-900 placeholder-gray-400"
+              />
+              <p class="text-sm text-gray-500 mt-2">Give your lesson a clear, descriptive title</p>
+            </div>
 
-    <label>Content</label><br/>
-    <textarea th:field="*{content}" rows="6"></textarea><br/><br/>
+            <!-- Content Field -->
+            <div>
+              <label for="content" class="block text-sm font-semibold text-gray-900 mb-2">
+                Lesson Content
+              </label>
+              <textarea 
+                id="content"
+                th:field="*{content}" 
+                rows="8"
+                placeholder="Describe what students will learn in this lesson, key concepts, and any important notes..."
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition text-gray-900 placeholder-gray-400 resize-none"
+              ></textarea>
+              <p class="text-sm text-gray-500 mt-2">Provide detailed information about the lesson content</p>
+            </div>
 
-    <label>Upload Video Lesson</label><br/>
-    <input type="file" name="videoFile" accept="video/*"/><br/><br/>
+            <!-- Video Upload Field -->
+            <div>
+              <label for="videoFile" class="block text-sm font-semibold text-gray-900 mb-2">
+                Upload Video Lesson
+              </label>
+              <div class="mt-2 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-purple-400 transition">
+                <div class="space-y-2 text-center">
+                  <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <div class="flex text-sm text-gray-600">
+                    <label for="videoFile" class="relative cursor-pointer bg-white rounded-md font-medium text-purple-600 hover:text-purple-700 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-purple-500">
+                      <span>Upload a video file</span>
+                      <input 
+                        id="videoFile" 
+                        name="videoFile" 
+                        type="file" 
+                        accept="video/*"
+                        class="sr-only"
+                        onchange="updateFileName(this)"
+                      />
+                    </label>
+                    <p class="pl-1">or drag and drop</p>
+                  </div>
+                  <p class="text-xs text-gray-500">MP4, MOV, AVI up to 500MB</p>
+                  <p id="fileName" class="text-sm text-purple-600 font-medium hidden"></p>
+                </div>
+              </div>
+              <p class="text-sm text-gray-500 mt-2">Upload a video to enhance your lesson (optional)</p>
+            </div>
 
-    <button type="submit">Create Lesson</button>
-</form>
+            <!-- Action Buttons -->
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
+              <a 
+                href="/teacher/dashboard" 
+                class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium"
+              >
+                Cancel
+              </a>
+              <button 
+                type="submit" 
+                class="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition font-medium shadow-sm hover:shadow-md"
+              >
+                Create Lesson
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
 
+      <!-- Additional Help -->
+      <div class="mt-6 text-center">
+        <p class="text-sm text-gray-500">
+          Need help? Check out our 
+          <a href="#" class="text-purple-600 hover:text-purple-700 font-medium">lesson creation guide</a>
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function updateFileName(input) {
+      const fileName = document.getElementById('fileName');
+      if (input.files && input.files[0]) {
+        fileName.textContent = '✓ ' + input.files[0].name;
+        fileName.classList.remove('hidden');
+      } else {
+        fileName.classList.add('hidden');
+      }
+    }
+  </script>
 </body>
 </html>

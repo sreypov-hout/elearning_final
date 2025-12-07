@@ -4,19 +4,192 @@
   <meta charset="UTF-8" />
   <title th:text="${course.title}">Course Details</title>
   <link rel="stylesheet" href="/css/style.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <h2 th:text="${course.title}">Course Title</h2>
-  <p th:text="${course.description}">Description</p>
+<body class="bg-gray-50 min-h-screen">
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b border-gray-200">
+    <div class="w-full px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <a href="/student/dashboard" class="text-gray-600 hover:text-gray-900 transition">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+          </a>
+          <h1 class="text-2xl font-bold text-gray-900">Course Content</h1>
+        </div>
+        <nav class="flex items-center space-x-4">
+          <a href="/student/dashboard" class="px-4 py-2 text-gray-700 hover:text-gray-900 transition font-medium">
+            My Learning
+          </a>
+          <a href="/" class="px-4 py-2 text-gray-700 hover:text-gray-900 transition font-medium">
+            Home
+          </a>
+        </nav>
+      </div>
+    </div>
+  </header>
 
-  <h3>Lessons</h3>
-  <ul>
-    <li th:each="l : ${lessons}">
-      <h4 th:text="${l.title}">Lesson title</h4>
-      <p th:text="${l.content}">Lesson content</p>
-    </li>
-  </ul>
+  <!-- Main Content -->
+  <main class="w-full px-4 sm:px-6 lg:px-8 py-8">
+    <div class="max-w-6xl mx-auto">
+      <!-- Course Header -->
+      <div class="bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl shadow-lg p-8 mb-8 text-white">
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <h2 class="text-3xl md:text-4xl font-bold mb-3" th:text="${course.title}">Course Title</h2>
+            <p class="text-purple-100 text-lg mb-6" th:text="${course.description}">Course description goes here</p>
+            
+            <!-- Course Stats -->
+            <div class="flex items-center space-x-6 text-sm">
+              <div class="flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                </svg>
+                <span th:text="${lessons != null ? #lists.size(lessons) : 0}">0</span>
+                <span class="ml-1">Lessons</span>
+              </div>
+              <div class="flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span>Self-paced</span>
+              </div>
+            </div>
+          </div>
 
-  <a href="/student/dashboard">Back</a>
+          <!-- Progress Circle -->
+          <div class="hidden md:block">
+            <div class="bg-white bg-opacity-20 rounded-lg p-4 text-center">
+              <div class="text-3xl font-bold">0%</div>
+              <div class="text-sm text-purple-100 mt-1">Complete</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mt-6">
+          <div class="w-full bg-purple-800 bg-opacity-30 rounded-full h-3">
+            <div class="bg-white h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content Layout: Sidebar + Lessons -->
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <!-- Sidebar -->
+        <div class="lg:col-span-1">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky top-8">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Course Content</h3>
+            
+            <div class="space-y-2 mb-6">
+              <div class="flex items-center text-sm text-gray-600">
+                <svg class="w-4 h-4 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <span>0 of <span th:text="${lessons != null ? #lists.size(lessons) : 0}">0</span> complete</span>
+              </div>
+              <div class="flex items-center text-sm text-gray-600">
+                <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span>Estimated time: 4h</span>
+              </div>
+            </div>
+
+            <button class="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition font-medium mb-3">
+              Resume Learning
+            </button>
+            
+            <a href="/student/dashboard" class="block w-full text-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium">
+              Back to Dashboard
+            </a>
+          </div>
+        </div>
+
+        <!-- Lessons Section -->
+        <div class="lg:col-span-3">
+          <div class="mb-6">
+            <h3 class="text-2xl font-bold text-gray-900 mb-2">Lessons</h3>
+            <p class="text-gray-600">Complete all lessons to finish this course</p>
+          </div>
+
+          <!-- Check for empty lessons -->
+          <div th:if="${lessons == null || #lists.isEmpty(lessons)}" 
+               class="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+            <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+            </svg>
+            <h4 class="text-xl font-semibold text-gray-900 mb-2">No lessons yet</h4>
+            <p class="text-gray-600">The instructor is preparing course content. Check back soon!</p>
+          </div>
+
+          <!-- Lessons List -->
+          <div th:if="${lessons != null && !#lists.isEmpty(lessons)}" class="space-y-4">
+            <div th:each="l, iterStat : ${lessons}" class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition">
+              <!-- Lesson Header -->
+              <div class="p-6">
+                <div class="flex items-start justify-between mb-4">
+                  <div class="flex items-start flex-1">
+                    <!-- Lesson Number -->
+                    <div class="flex-shrink-0 w-10 h-10 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center font-bold mr-4">
+                      <span th:text="${iterStat.count}">1</span>
+                    </div>
+                    
+                    <!-- Lesson Info -->
+                    <div class="flex-1">
+                      <h4 class="text-xl font-bold text-gray-900 mb-2" th:text="${l.title}">Lesson title</h4>
+                      <p class="text-gray-600 leading-relaxed" th:text="${l.content}">Lesson content and description goes here</p>
+                    </div>
+                  </div>
+
+                  <!-- Completion Status -->
+                  <div class="ml-4">
+                    <button class="p-2 rounded-lg border-2 border-gray-300 hover:border-purple-600 hover:bg-purple-50 transition">
+                      <svg class="w-5 h-5 text-gray-400 hover:text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Video Section -->
+                <div th:if="${l.videoUrl != null}" class="mt-4">
+                  <video class="w-full rounded-lg shadow-sm" controls>
+                    <source th:src="${l.videoUrl}" type="video/mp4"/>
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+
+                <!-- Lesson Actions -->
+                <div class="mt-4 flex items-center justify-between">
+                  <div class="flex items-center space-x-4 text-sm text-gray-500">
+                    <div th:if="${l.videoUrl != null}" class="flex items-center">
+                      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      </svg>
+                      <span>Video lesson</span>
+                    </div>
+                    <div class="flex items-center">
+                      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      </svg>
+                      <span>15 min</span>
+                    </div>
+                  </div>
+
+                  <button class="px-4 py-2 text-purple-600 hover:bg-purple-50 rounded-lg transition font-medium">
+                    Mark as Complete
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
 </body>
 </html>

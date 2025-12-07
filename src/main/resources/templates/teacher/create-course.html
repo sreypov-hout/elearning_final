@@ -4,15 +4,127 @@
   <meta charset="UTF-8" />
   <title>Create Course</title>
   <link rel="stylesheet" href="/css/style.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <h2>Create Course</h2>
-  <form th:action="@{/teacher/create-course}" method="post" th:object="${course}">
-    <label>Title</label><br/>
-    <input type="text" th:field="*{title}" required/><br/>
-    <label>Description</label><br/>
-    <textarea th:field="*{description}" rows="6"></textarea><br/><br/>
-    <button type="submit">Create</button>
-  </form>
+<body class="bg-gray-50 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b border-gray-200">
+    <div class="w-full px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold text-gray-900">Create New Course</h1>
+        <nav class="flex items-center space-x-4">
+          <a href="/teacher/dashboard" class="px-4 py-2 text-gray-700 hover:text-gray-900 transition font-medium">
+            Dashboard
+          </a>
+          <a href="/" class="px-4 py-2 text-gray-700 hover:text-gray-900 transition font-medium">
+            Home
+          </a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="w-full px-4 sm:px-6 lg:px-8 py-8">
+    <div class="w-full max-w-3xl mx-auto">
+
+      <!-- Info Card -->
+      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+        <div class="flex items-start">
+          <svg class="w-5 h-5 text-blue-600 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+          </svg>
+          <div>
+            <h3 class="text-sm font-medium text-blue-900">Tips for creating a great course</h3>
+            <p class="text-sm text-blue-700 mt-1">
+              Choose a clear, descriptive title and provide a detailed description to help students understand what they'll learn.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Card -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div class="p-8">
+
+          <form th:action="@{/teacher/create-course}" method="post" th:object="${course}" class="space-y-6">
+
+            <!-- Title Field -->
+            <div>
+              <label for="title" class="block text-sm font-semibold text-gray-900 mb-2">
+                Course Title <span class="text-red-500">*</span>
+              </label>
+
+              <input 
+                type="text" 
+                id="title"
+                th:field="*{title}" 
+                required
+                placeholder="e.g., Complete Web Development Bootcamp"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg 
+                focus:ring-2 focus:ring-purple-500 focus:border-transparent 
+                transition text-gray-900 placeholder-gray-400"
+              />
+
+              <p class="text-sm text-gray-500 mt-2">Enter a clear and descriptive title for your course</p>
+            </div>
+
+            <!-- Description Field -->
+            <div>
+              <label for="description" class="block text-sm font-semibold text-gray-900 mb-2">
+                Course Description
+              </label>
+
+              <textarea 
+                id="description"
+                th:field="*{description}" 
+                rows="8"
+                placeholder="Describe what students will learn in this course, the skills they'll gain, and who this course is for..."
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg 
+                focus:ring-2 focus:ring-purple-500 focus:border-transparent 
+                transition text-gray-900 placeholder-gray-400 resize-none"
+              ></textarea>
+
+              <p class="text-sm text-gray-500 mt-2">
+                Provide a detailed description to help students understand the course content
+              </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
+              <a 
+                href="/teacher/dashboard" 
+                class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg 
+                hover:bg-gray-300 transition font-medium"
+              >
+                Cancel
+              </a>
+
+              <button 
+                type="submit" 
+                class="px-6 py-3 bg-purple-600 text-white rounded-lg 
+                hover:bg-purple-700 transition font-medium shadow-sm hover:shadow-md"
+              >
+                Create Course
+              </button>
+            </div>
+
+          </form>
+
+        </div>
+      </div>
+
+      <!-- Additional Help -->
+      <div class="mt-6 text-center">
+        <p class="text-sm text-gray-500">
+          Need help? Check out our 
+          <a href="#" class="text-purple-600 hover:text-purple-700 font-medium">course creation guide</a>
+        </p>
+      </div>
+
+    </div>
+  </main>
+
 </body>
 </html>

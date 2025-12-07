@@ -4,7 +4,6 @@ import com.example.elearning.entity.User;
 import com.example.elearning.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,47 +19,51 @@ public class SecurityConfig {
         this.userRepo = userRepo;
     }
 
+    // Password encoder
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    // UserDetailsService for Spring Security
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> {
-            User user = userRepo.findByEmail(username).orElseThrow(() ->
-                    new UsernameNotFoundException("User not found"));
-            UserDetails ud = org.springframework.security.core.userdetails.User.withUsername(user.getEmail())
+            User user = userRepo.findByEmail(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+            return org.springframework.security.core.userdetails.User.withUsername(user.getEmail())
                     .password(user.getPassword())
                     .roles(user.getRole().name())
                     .build();
-            return ud;
         };
     }
 
+    // Security filter chain
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/css/**", "/", "/login", "/register", "/error").permitAll()
-                    .requestMatchers("/admin/**").hasRole("ADMIN")
-                    .requestMatchers("/teacher/**").hasRole("TEACHER")
-                    .requestMatchers("/student/**").hasRole("STUDENT")
-                    .anyRequest().authenticated()
-            )
-            .formLogin(form -> form
-                    .loginPage("/login")
-                    .loginProcessingUrl("/perform_login")
-                    .defaultSuccessUrl("/", true)
-                    .failureUrl("/login?error")
-                    .permitAll()
-            )
-            .logout(logout -> logout
-                    .logoutUrl("/logout")
-                    .logoutSuccessUrl("/login?logout")
-                    .invalidateHttpSession(true)
-                    .deleteCookies("JSESSIONID")
-            );
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers("/", "/login", "/register", "/register/**", "/css/**").permitAll()
+            .requestMatchers("/admin/**").hasRole("ADMIN")
+            .requestMatchers("/teacher/**").hasRole("TEACHER")
+            .requestMatchers("/student/**").hasRole("STUDENT")
+            .anyRequest().authenticated()
+        )
+        .formLogin(form -> form
+            .loginPage("/login")
+            .loginProcessingUrl("/perform_login")
+            .defaultSuccessUrl("/", true)
+            .failureUrl("/login?error")
+            .permitAll()
+        )
+        .logout(logout -> logout
+            .logoutUrl("/logout")
+            .logoutSuccessUrl("/")
+            .invalidateHttpSession(true)
+            .deleteCookies("JSESSIONID")
+        )
+        .csrf(csrf -> csrf.disable());
 
-        return http.build();
-    }
+    return http.build();
+}
 }

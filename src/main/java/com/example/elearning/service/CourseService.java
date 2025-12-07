@@ -10,25 +10,35 @@ import java.util.Optional;
 
 @Service
 public class CourseService {
+
     private final CourseRepository courseRepo;
 
     public CourseService(CourseRepository courseRepo) {
         this.courseRepo = courseRepo;
     }
 
-    public Course create(Course course) {
+    // CREATE or UPDATE
+    public Course save(Course course) {
         return courseRepo.save(course);
     }
 
+    // FIND by ID
     public Optional<Course> findById(Long id) {
         return courseRepo.findById(id);
     }
 
+    // FIND all courses
     public List<Course> findAll() {
         return courseRepo.findAll();
     }
 
+    // FIND courses by teacher
     public List<Course> findByTeacher(User teacher) {
         return courseRepo.findByTeacher(teacher);
+    }
+
+    // DELETE
+    public void deleteById(Long id) {
+        courseRepo.deleteById(id);
     }
 }

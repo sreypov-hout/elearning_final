@@ -4,32 +4,138 @@
   <meta charset="UTF-8" />
   <title>Student Dashboard</title>
   <link rel="stylesheet" href="/css/style.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <h2>Student Dashboard</h2>
-  <nav><a href="/">Home</a></nav>
+<body class="bg-gray-50 min-h-screen">
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b border-gray-200">
+    <div class="w-full px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold text-gray-900">My Learning</h1>
+        <nav class="flex items-center space-x-4">
+          <a href="/courses" class="px-4 py-2 text-gray-700 hover:text-gray-900 transition font-medium">
+            Browse Courses
+          </a>
+          <a href="/" class="px-4 py-2 text-gray-700 hover:text-gray-900 transition font-medium">
+            Home
+          </a>
+        </nav>
+      </div>
+    </div>
+  </header>
 
-  <h3>All Courses</h3>
-  <div>
-    <ul>
-      <li th:each="c : ${allCourses}">
-        <span th:text="${c.title}">Course</span>
-        <form th:action="@{|/student/enroll/${c.id}|}" method="post" style="display:inline">
-          <button type="submit">Enroll</button>
-        </form>
-        <a th:if="${#lists.contains(enrolledCourses, c)}"
-   th:href="@{|/student/course/${c.id}|}">View</a>
-      </li>
-    </ul>
-  </div>
+  <!-- Main Content -->
+  <main class="w-full px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Welcome Section -->
+    <div class="mb-8">
+      <h2 class="text-3xl font-bold text-gray-900 mb-2">Welcome back!</h2>
+      <p class="text-gray-600">Continue learning and achieve your goals</p>
+    </div>
 
-  <h3>Enrolled Courses</h3>
-  <div>
-    <ul>
-      <li th:each="c : ${enrolledCourses}">
-        <a th:href="@{|/student/course/${c.id}|}" th:text="${c.title}">Enrolled Course</a>
-      </li>
-    </ul>
-  </div>
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="p-3 bg-purple-100 rounded-lg">
+            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Enrolled Courses</p>
+            <p class="text-2xl font-bold text-gray-900" th:text="${#lists.size(enrolledCourses)}">0</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="p-3 bg-blue-100 rounded-lg">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Completed</p>
+            <p class="text-2xl font-bold text-gray-900">0</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="p-3 bg-green-100 rounded-lg">
+            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">In Progress</p>
+            <p class="text-2xl font-bold text-gray-900" th:text="${#lists.size(enrolledCourses)}">0</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Enrolled Courses Section -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-2xl font-bold text-gray-900">My Courses</h3>
+        <a href="/courses" class="text-purple-600 hover:text-purple-700 font-medium text-sm">
+          Browse more courses →
+        </a>
+      </div>
+
+      <!-- Check if enrolled in any courses -->
+      <div th:if="${enrolledCourses == null || #lists.isEmpty(enrolledCourses)}" 
+           class="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+        <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+        </svg>
+        <h4 class="text-xl font-semibold text-gray-900 mb-2">No courses yet</h4>
+        <p class="text-gray-600 mb-6">Start learning by enrolling in your first course</p>
+        <a href="/courses" class="inline-block px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition font-medium">
+          Explore Courses
+        </a>
+      </div>
+
+      <!-- Enrolled Courses Grid -->
+      <div th:if="${enrolledCourses != null && !#lists.isEmpty(enrolledCourses)}" 
+           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div th:each="c : ${enrolledCourses}" 
+             class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition group">
+          <!-- Course Image Placeholder -->
+          <div class="h-40 bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center">
+            <svg class="w-16 h-16 text-white opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+            </svg>
+          </div>
+
+          <!-- Course Content -->
+          <div class="p-5">
+            <h4 class="font-bold text-gray-900 text-lg mb-2 group-hover:text-purple-600 transition" th:text="${c.title}">Course Title</h4>
+            <p class="text-sm text-gray-600 mb-4 line-clamp-2" th:text="${c.description}">Course description</p>
+            
+            <!-- Progress Bar -->
+            <div class="mb-4">
+              <div class="flex justify-between text-xs text-gray-600 mb-1">
+                <span>Progress</span>
+                <span>0%</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-purple-600 h-2 rounded-full" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- Action Button -->
+            <a th:href="@{|/student/course/${c.id}|}" 
+               class="block w-full text-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition font-medium">
+              Continue Learning
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
 </body>
 </html>

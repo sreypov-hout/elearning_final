@@ -16,58 +16,50 @@ public class AuthController {
         this.userService = userService;
     }
 
-    // Home page
     @GetMapping("/")
     public String index() {
         return "index";
     }
 
-    // Login
     @GetMapping("/login")
     public String loginPage() {
         return "auth/login";
     }
 
-    // -------------------------------
-    // STUDENT REGISTER PAGE
-    // -------------------------------
+    // Popup page to choose role
+    @GetMapping("/register")
+    public String chooseRegister() {
+        return "auth/choose-register";
+    }
+
     @GetMapping("/register/student")
     public String studentRegisterPage(Model model) {
         model.addAttribute("user", new User());
         model.addAttribute("role", "STUDENT");
-        return "auth/register";   // uses same register page
+        return "auth/register";
     }
 
-    // -------------------------------
-    // TEACHER REGISTER PAGE
-    // -------------------------------
     @GetMapping("/register/teacher")
     public String teacherRegisterPage(Model model) {
         model.addAttribute("user", new User());
         model.addAttribute("role", "TEACHER");
-        return "auth/register";   // uses same register page
+        return "auth/register";
     }
 
-    // -------------------------------
-    // SUBMIT REGISTER FORM
-    // -------------------------------
+    // Save user
     @PostMapping("/register")
     public String registerUser(
             @ModelAttribute("user") User user,
             @RequestParam("role") String role,
             Model model) {
 
-        // Check email exists
         if (userService.existsByEmail(user.getEmail())) {
             model.addAttribute("error", "Email already exists");
             model.addAttribute("role", role);
             return "auth/register";
         }
 
-        // Convert String to Enum
         user.setRole(Role.valueOf(role));
-
-        // Save user
         userService.register(user);
 
         return "redirect:/login?registered";
